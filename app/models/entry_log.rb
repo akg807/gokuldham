@@ -1,0 +1,2 @@
+class EntryLog < ApplicationRecord
+end
