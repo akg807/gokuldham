@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_06_114626) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_06_152155) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
-  enable_extension "pgcrypto"
 
   create_table "amenities", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "name", null: false
     t.datetime "updated_at", null: false
   end
 
@@ -27,41 +27,54 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_114626) do
     t.string "floor"
     t.integer "number", null: false
     t.datetime "updated_at", null: false
-    t.index ["block", "number"], name: "index_apartments_on_block_and_number", unique: true
   end
 
   create_table "entry_logs", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.datetime "in_time"
+    t.datetime "out_time"
+    t.uuid "rfid", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "invoices", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.datetime "due_date"
+    t.datetime "fulfillment_date"
+    t.integer "paid_amount", default: 0
+    t.string "status", default: "pending"
+    t.integer "total_amount", null: false
+    t.uuid "transaction_id"
     t.datetime "updated_at", null: false
   end
 
   create_table "requests", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "description", null: false
+    t.datetime "eta"
+    t.string "reference_number", null: false
+    t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
-    t.bigint "apartment_id"
-    t.uuid "api_key", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.string "name", null: false
-    t.string "role", default: "resident", null: false
+    t.uuid "r_rfid"
+    t.string "role", default: "resident"
     t.datetime "updated_at", null: false
-    t.index ["apartment_id"], name: "index_users_on_apartment_id"
-    t.index ["api_key"], name: "index_users_on_api_key", unique: true
-    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   create_table "vendors", force: :cascade do |t|
+    t.bigint "amenity_id"
     t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.string "phone_number"
     t.datetime "updated_at", null: false
+    t.uuid "v_rfid"
+    t.index ["amenity_id"], name: "index_vendors_on_amenity_id"
   end
 
-  add_foreign_key "users", "apartments"
+  add_foreign_key "vendors", "amenities"
 end
