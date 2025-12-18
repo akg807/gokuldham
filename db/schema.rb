@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_06_152155) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_07_144416) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_152155) do
 
   create_table "apartments", force: :cascade do |t|
     t.string "amenities_flag", default: [], array: true
+    t.boolean "approved", default: false
     t.string "block", null: false
     t.datetime "created_at", null: false
     t.string "floor"
@@ -52,7 +53,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_06_152155) do
     t.datetime "created_at", null: false
     t.string "description", null: false
     t.datetime "eta"
+    t.integer "instance_id"
     t.string "reference_number", null: false
+    t.integer "request_type", default: 0, null: false
     t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
   end

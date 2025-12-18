@@ -7,5 +7,6 @@ Rails.application.routes.draw do
   post "amenities/create", to: "amenities#create"
   post "vendors/create", to: "vendors#create"
   post "apartments/create", to: "apartments#create"
-
+  post "requests/new", to: "requests#create"
+  
 end
