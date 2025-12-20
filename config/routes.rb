@@ -4,9 +4,14 @@ Rails.application.routes.draw do
   post "users/signup", to: "users#signup"
   post "users/update_role", to: "users#update_role"
 
+  post "requests/new", to: "requests#create"
+  post "requests/request_approval", to: "requests#request_approval"
+  get "requests/view_requests", to: "requests#view_requests"
+
+
   post "amenities/create", to: "amenities#create"
   post "vendors/create", to: "vendors#create"
   post "apartments/create", to: "apartments#create"
-  post "requests/new", to: "requests#create"
-  
+
+
 end

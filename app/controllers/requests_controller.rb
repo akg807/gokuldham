@@ -6,8 +6,8 @@ class RequestsController < ApplicationController
       Rails.logger.info "inside new request #{params[:request]}"
       @request = Request.new(request_params)
       @request.reference_number = rand(100_000_000..999_999_999).to_s
-      @request.status = "NOT_STARTED"
-      array = [ @request ]
+      @request.status = "NOT_APPROVED"
+      array_of_new_request = [ @request ]
 
       case @request.request_type
       when "apartment"
@@ -15,7 +15,7 @@ class RequestsController < ApplicationController
         @apartment.save
         @request.instance_id = @apartment.id
         @request.eta = 3.months.from_now
-        array << @apartment
+        array_of_new_request << @apartment
       when "user"
         @request.eta = 1.month.from_now
       when "amenities"
@@ -26,26 +26,60 @@ class RequestsController < ApplicationController
 
 
       if @request.save
-        render json: { message: "#{@request.request_type} Request submitted", request_details: array }, status: :created
+        render json: { message: "#{@request.request_type} Request submitted", new_request_details: array_of_new_request }, status: :created
       else
         render json: { errors: @request.errors.full_messages }, status: :unprocessable_entity
       end
     end
   end
 
-  def view
-    @user = User.find_by(email: user_params[:email])
-    # params[:request_type] = 2
-    if @user.role == "Admin"
-      @requests = Request.where(status: "NOT_STARTED", request_type: params[:request_type])
-      case @requests.request_type
-      when "apartment"
-        @apartments = Apartment.where(id: @requests.instance_id)
-      when "user"
-        @persons = User.where(id: @requests.instance_id)
-      end
+  def view_requests
+    @user = User.find_by(email: params[:email])
+    @request_type = params[:request_type]
 
-      render json: {message: "Pending requests for #{@requests.request_type}", }
+    case @request_type
+    when "apartment"
+      @apartment = Apartment.find_by(id: @user.apartment_id)
+      @request = Request.where(instance_id: @apartment.id, request_type: 2)
+      render json: { message: "All Apartment Requests:", apartment_requests: @request }, status: :ok
+
+    when "user"
+      @request = Request.where(instance_id: @user.id, request_type: 1)
+      render json: { message: "All User Requests:", user_requests: @request }, status: :ok
+
+    when "amenities"
+      @apartment = Apartment.find_by(id: @user.apartment_id)
+      @request = Request.where(instance_id: @apartment.id, request_type: 3)
+      render json: { message: "All Amenities Requests:", amenities_requests: @request }, status: :ok
+
+    when "other"
+      @request = Request.where(instance_id: @user.id, request_type: 0)
+      render json: { message: "All other requests:", other_requests: @request }, status: :ok
+
+    end
+  end
+
+  def request_approval
+    @user = User.find_by(email: params[:email])
+    @reference_number = params[:reference_number]
+    @is_approved = params[:is_approved]
+
+    return render json: { message: "Invalid Email" } if @user.nil?
+
+    return render json: { message: "Access Denied" } if @user.role != "Admin"
+
+    @request = Request.find_by(reference_number: @reference_number)
+    return render json: { message: "Invalid reference number" } if @request.nil?
+
+    if @is_approved == false
+      @request.update(status: "DECLINED")
+      render json: { message: "Request DECLINED" }
+
+    elsif @is_approved == true
+      @request.update(status: "APPROVED")
+      render json: { message: "Request APPROVED" }
+
+    else render json: { message: "Invalid parameters" }
     end
   end
 

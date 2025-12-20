@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_07_144416) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_18_084239) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -61,12 +61,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_07_144416) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.bigint "apartment_id"
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.string "name", null: false
     t.uuid "r_rfid"
     t.string "role", default: "resident"
     t.datetime "updated_at", null: false
+    t.index ["apartment_id"], name: "index_users_on_apartment_id"
   end
 
   create_table "vendors", force: :cascade do |t|
@@ -79,5 +81,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_07_144416) do
     t.index ["amenity_id"], name: "index_vendors_on_amenity_id"
   end
 
+  add_foreign_key "users", "apartments"
   add_foreign_key "vendors", "amenities"
 end
