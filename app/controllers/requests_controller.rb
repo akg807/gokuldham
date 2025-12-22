@@ -82,6 +82,8 @@ class RequestsController < ApplicationController
 
     elsif @is_approved == true
       @request.update(status: "APPROVED")
+      if @request.request_type == "apartment"
+        @apartment = "Badme dekhenge"
       render json: { message: "Request APPROVED" }
 
     else render json: { message: "Invalid parameters" }
