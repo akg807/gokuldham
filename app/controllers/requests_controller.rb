@@ -19,7 +19,9 @@ class RequestsController < ApplicationController
       when "user"
         @request.eta = 1.month.from_now
       when "amenities"
-        @request.eta = 7.days.from_now
+        @request.eta = 7.days.from_now 
+      when "vendor"
+        return json: { message: "Vendor Requests are currently not supported. Check back later !!"}
       when "other"
         @request.eta = 15.days.from_now
       end
@@ -52,6 +54,9 @@ class RequestsController < ApplicationController
       @request = Request.where(instance_id: @apartment.id, request_type: 3)
       render json: { message: "All Amenities Requests:", amenities_requests: @request }, status: :ok
 
+    when "vendor"
+      Rails.logger.info "To be implemented"
+
     when "other"
       @request = Request.where(instance_id: @user.id, request_type: 0)
       render json: { message: "All other requests:", other_requests: @request }, status: :ok
@@ -73,7 +78,7 @@ class RequestsController < ApplicationController
 
     if @is_approved == false
       @request.update(status: "DECLINED")
-      render json: { message: "Request DECLINED" }
+      render json: { message: "Maa chudwa le" }
 
     elsif @is_approved == true
       @request.update(status: "APPROVED")
