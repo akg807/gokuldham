@@ -65,4 +65,3 @@ class InvoicesController < ApplicationController
   end
 
 end
-# Handles overdue and partial payment penalties for maintenance invoices
