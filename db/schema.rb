@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_20_165902) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_02_120922) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,14 +39,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_20_165902) do
   end
 
   create_table "invoices", force: :cascade do |t|
+    t.bigint "apartment_id", null: false
     t.datetime "created_at", null: false
     t.datetime "due_date"
     t.datetime "fulfillment_date"
     t.integer "paid_amount", default: 0
+    t.decimal "penalty_amount", default: "0.0"
+    t.boolean "penalty_applied", default: false
     t.string "status", default: "pending"
     t.integer "total_amount", null: false
     t.uuid "transaction_id"
     t.datetime "updated_at", null: false
+    t.index ["apartment_id"], name: "index_invoices_on_apartment_id"
   end
 
   create_table "requests", force: :cascade do |t|
@@ -69,6 +73,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_20_165902) do
     t.string "role", default: "resident"
     t.datetime "updated_at", null: false
     t.index ["apartment_id"], name: "index_users_on_apartment_id"
+    t.index ["r_rfid"], name: "index_users_on_r_rfid", unique: true
   end
 
   create_table "vendors", force: :cascade do |t|
@@ -80,8 +85,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_20_165902) do
     t.datetime "updated_at", null: false
     t.uuid "v_rfid"
     t.index ["amenity_id"], name: "index_vendors_on_amenity_id"
+    t.index ["v_rfid"], name: "index_vendors_on_v_rfid", unique: true
   end
 
+  add_foreign_key "invoices", "apartments"
   add_foreign_key "users", "apartments"
   add_foreign_key "vendors", "amenities"
 end
