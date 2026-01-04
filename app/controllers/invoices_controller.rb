@@ -29,54 +29,21 @@ class InvoicesController < ApplicationController
   end
 
   def pay_maintenance
-  invoice = Invoice.find_by(id: params[:id])
-  return render json: { error: "Invoice not found" }, status: :not_found unless invoice
-
-  PenaltyService.apply_penalty(invoice)
-
-  raw_amount = params[:amount]
-
-  unless raw_amount.is_a?(Numeric) || raw_amount.to_s.match?(/\A\d+(\.\d{1,2})?\z/)
-    return render json: { error: "Invalid payment amount format" }, status: :unprocessable_entity
-  end
-
-  amount = raw_amount.to_f
-
-  if amount <= 0
-    return render json: { error: "Payment amount must be greater than zero" }, status: :unprocessable_entity
-  end
-
-  invoice.paid_amount ||= 0
-  remaining = invoice.total_amount - invoice.paid_amount
-
-  if amount > remaining
-    return render json: {
-      error: "Payment exceeds remaining balance",
-      remaining_balance: remaining
-    }, status: :unprocessable_entity
-  end
-
-  invoice.paid_amount += amount
-
-  if invoice.paid_amount >= invoice.total_amount
-    invoice.status = "paid"
-  else
-    invoice.status = "partially_paid"
-  end
-
-  invoice.transaction_id = SecureRandom.uuid
-  invoice.save!
+  invoice = PaymentService.process_payment(params[:id], params[:amount])
 
   render json: {
-  message: "Payment successful",
-  invoice: {
-    status: invoice.status,
-    due_date: invoice.due_date,
-    paid_amount: invoice.paid_amount,
-    total_amount: invoice.total_amount,
-    transaction_id: invoice.transaction_id
-  }
-}, status: :ok
+    message: "Payment successful",
+    invoice: {
+      id: invoice.id,
+      status: invoice.status,
+      paid_amount: invoice.paid_amount,
+      total_amount: invoice.total_amount,
+      remaining_balance: invoice.total_amount - invoice.paid_amount
+    }
+  }, status: :ok
+
+  rescue PaymentService::PaymentError => e
+  render json: { error: e.message }, status: :unprocessable_entity
   end
 end
 # for partial payments render necessary fields
