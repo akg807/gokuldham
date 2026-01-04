@@ -34,8 +34,17 @@ class InvoicesController < ApplicationController
 
   PenaltyService.apply_penalty(invoice)
 
-  amount = params[:amount].to_f
-  return render json: { error: "Invalid payment amount" }, status: :unprocessable_entity if amount <= 0
+  raw_amount = params[:amount]
+
+  unless raw_amount.is_a?(Numeric) || raw_amount.to_s.match?(/\A\d+(\.\d{1,2})?\z/)
+    return render json: { error: "Invalid payment amount format" }, status: :unprocessable_entity
+  end
+
+  amount = raw_amount.to_f
+
+  if amount <= 0
+    return render json: { error: "Payment amount must be greater than zero" }, status: :unprocessable_entity
+  end
 
   invoice.paid_amount ||= 0
   remaining = invoice.total_amount - invoice.paid_amount
