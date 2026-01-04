@@ -12,7 +12,7 @@ class InvoicesController < ApplicationController
     render json: { message: "Maintenance invoices generated successfully", invoices_created: created_count }, status: :ok
   end
 
-  def pending_payments
+  def user_pending_payments
   user = User.where.not(role: "Guest")
              .find_by(email: params[:email])
 
