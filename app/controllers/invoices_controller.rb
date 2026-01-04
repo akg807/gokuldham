@@ -59,10 +59,21 @@ class InvoicesController < ApplicationController
   invoice.save!
 
   render json: {
-    message: "Payment successful",
-    invoice: invoice
-  }, status: :ok
+  message: "Payment successful",
+  invoice: {
+    status: invoice.status,
+    due_date: invoice.due_date,
+    paid_amount: invoice.paid_amount,
+    total_amount: invoice.total_amount,
+    transaction_id: invoice.transaction_id
+  }
+}, status: :ok
   end
-
 end
-# Handles overdue and partial payment penalties for maintenance invoices
+# for partial payments render necessary fields
+# payments records should be stored
+# pending payments to be ranamed to userpendingpayments
+# apply ka name change to apply penalty
+# bulk generation ke time pe paid amount should be defaulted to 0
+# ENUMS for Invoice should be capital
+# if amount is not number like true .. expection handling
