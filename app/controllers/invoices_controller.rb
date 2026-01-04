@@ -32,7 +32,7 @@ class InvoicesController < ApplicationController
   invoice = Invoice.find_by(id: params[:id])
   return render json: { error: "Invoice not found" }, status: :not_found unless invoice
 
-  PenaltyService.apply(invoice)
+  PenaltyService.apply_penalty(invoice)
 
   amount = params[:amount].to_f
   return render json: { error: "Invalid payment amount" }, status: :unprocessable_entity if amount <= 0

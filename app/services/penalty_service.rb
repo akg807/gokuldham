@@ -2,7 +2,7 @@ class PenaltyService
   MISSED_PENALTY_RATE  = 0.10
   PARTIAL_PENALTY_RATE = 0.05
 
-  def self.apply(invoice)
+  def self.apply_penalty(invoice)
     return if invoice.penalty_applied
     return if invoice.due_date >= Date.current
 
