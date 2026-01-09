@@ -13,5 +13,9 @@ Rails.application.routes.draw do
   post "vendors/create", to: "vendors#create"
   post "apartments/create", to: "apartments#create"
 
+  post "entry_logs/logs", to: "entry_logs#logs"
 
+  post "invoices/generate_maintenance", to: "invoices#generate_maintenance"
+  get "invoices/user_pending_payments", to: "invoices#user_pending_payments"
+  post "invoices/pay_maintenance", to: "invoices#pay_maintenance"
 end

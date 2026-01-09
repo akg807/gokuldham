@@ -19,9 +19,7 @@ class RequestsController < ApplicationController
       when "user"
         @request.eta = 1.month.from_now
       when "amenities"
-        @request.eta = 7.days.from_now 
-      when "vendor"
-        return json: { message: "Vendor Requests are currently not supported. Check back later !!"}
+        @request.eta = 7.days.from_now
       when "other"
         @request.eta = 15.days.from_now
       when "vendor"
@@ -86,7 +84,7 @@ class RequestsController < ApplicationController
 
     if @is_approved == false
       @request.update(status: "DECLINED")
-      render json: { message: "Maa chudwa le" }
+      render json: { message: "Request DECLINED" }
 
     elsif @is_approved == true
       @request.update(status: "APPROVED")

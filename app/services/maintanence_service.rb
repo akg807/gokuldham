@@ -15,7 +15,8 @@ class MaintanenceService
       apartment.invoices.create!(
         total_amount: maintenance_amount,
         due_date: due_date,
-        status: "pending"
+        status: "pending",
+        paid_amount: 0
       )
 
       created_count += 1
