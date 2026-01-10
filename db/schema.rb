@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_04_124732) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_09_142636) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -31,11 +31,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_04_124732) do
   end
 
   create_table "entry_logs", force: :cascade do |t|
+    t.bigint "apartment_id", null: false
     t.datetime "created_at", null: false
     t.datetime "in_time"
     t.datetime "out_time"
     t.uuid "rfid", null: false
     t.datetime "updated_at", null: false
+    t.index ["apartment_id"], name: "index_entry_logs_on_apartment_id"
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -99,6 +101,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_04_124732) do
     t.index ["v_rfid"], name: "index_vendors_on_v_rfid", unique: true
   end
 
+  add_foreign_key "entry_logs", "apartments"
   add_foreign_key "invoices", "apartments"
   add_foreign_key "payments", "invoices"
   add_foreign_key "users", "apartments"

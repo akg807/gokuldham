@@ -12,6 +12,8 @@ class EntryLogsController < ApplicationController
     render json: { message: "record created/updated", value: entry_details }, status: :ok
   rescue ActiveRecord::RecordInvalid => e
     render json: { error: e.record.errors.full_messages }, status: :unprocessable_entity
+  rescue StandardError => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   private

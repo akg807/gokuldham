@@ -6,4 +6,5 @@ class User < ApplicationRecord
            primary_key: :r_rfid
 
   has_many :invoices
+  belongs_to :apartment
 end

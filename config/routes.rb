@@ -18,4 +18,8 @@ Rails.application.routes.draw do
   post "invoices/generate_maintenance", to: "invoices#generate_maintenance"
   get "invoices/user_pending_payments", to: "invoices#user_pending_payments"
   post "invoices/pay_maintenance", to: "invoices#pay_maintenance"
+
+  get "analytics/prime_suspects", to: "analytics#prime_suspects"
+  get "analytics/most_active_person", to: "analytics#most_active_person"
+  get "analytics/top_defaulter", to: "analytics#top_defaulter"
 end
