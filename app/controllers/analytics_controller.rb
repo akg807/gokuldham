@@ -13,12 +13,12 @@ class AnalyticsController < ApplicationController
     }
   end
 
-  # def most_active_person
-  #   result = MostActivePersonService.new.call
-  #   return render json: { message: "No entry data found" } unless result
+  def most_active_person
+    result = MostActivePersonService.new.call
+    return render json: { message: "No entry data found" } unless result
 
-  #   render json: result
-  # end
+    render json: result
+  end
 
   # def top_defaulter
   #   result = TopDefaulterService.new.call
