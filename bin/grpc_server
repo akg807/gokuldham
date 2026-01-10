@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require_relative "../config/environment"
+require_relative "../app/grpc/analytics_server"
+
+server = GRPC::RpcServer.new
+server.add_http2_port("0.0.0.0:50051", :this_port_is_insecure)
+server.handle(AnalyticsGrpcServer.new)
+
+puts "🚀 AMS Analytics gRPC server running on port 50051"
+server.run_till_terminated

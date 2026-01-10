@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+require_relative "../config/environment"
+require Rails.root.join("lib/analytics_pb")
+require Rails.root.join("lib/analytics_services_pb")
+
+# Connect to the gRPC server
+stub = AnalyticsService::Stub.new("localhost:50051", :this_channel_is_insecure)
+
+# ---- Test 1: Most Active Person ----
+puts "➡️  Fetching Most Active Person"
+resp = stub.most_active_person(Empty.new)
+puts resp.inspect
+puts
+
+# ---- Test 2: Prime Suspects ----
+puts "➡️  Fetching Prime Suspects"
+request = PrimeSuspectsRequest.new(
+  apartment_id: 3,
+  crime_from: "2026-01-09 14:40:21",
+  crime_to:   "2026-01-09 14:40:45"
+)
+
+resp = stub.prime_suspects(request)
+puts resp.inspect
+puts
+
+# ---- Test 3: Top Defaulter ----
+puts "➡️  Fetching Top Defaulter"
+resp = stub.top_defaulter(Empty.new)
+puts resp.inspect
